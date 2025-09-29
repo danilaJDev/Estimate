@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<footer th:fragment="footer" class="bg-dark text-white text-center p-3 mt-auto">
+    <div class="container">
+        <p>&copy; <span th:text="${#dates.year(#dates.createNow())}">2025</span> EstimateApp. All Rights Reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

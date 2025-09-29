@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html th:replace="~{_layout :: html(content=~{::content}, title='Register')}">
+<body>
+<div th:fragment="content">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <h2 class="text-center mb-4">Create an Account</h2>
+            <form id="register-form" action="/api/v1/auth/signup" method="post">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="role" class="form-label">Register as:</label>
+                    <select id="role" name="role" class="form-select">
+                        <option value="ESTIMATOR">Estimator</option>
+                        <option value="CLIENT">Client</option>
+                    </select>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+                <p class="mt-3 text-center">
+                    Already have an account? <a th:href="@{/login}">Login here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Intercept form submission to send as JSON via Fetch API
+        document.getElementById('register-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Redirect to login page on successful registration
+                    window.location.href = '/login?registration_success';
+                } else {
+                    // Handle errors, e.g., display a message
+                    alert('Registration failed. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        });
+    </script>
+</div>
+</body>
+</html>
