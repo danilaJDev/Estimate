@@ -250,4 +250,12 @@ public class EstimateService {
                 .description(position.getDescription())
                 .build();
     }
+
+    @Transactional(readOnly = true)
+    public Page<EstimateResponseDto> getEstimatesByEstimator(String username, Pageable pageable) {
+        User estimator = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+        return estimateRepository.findAllByEstimator(estimator, pageable)
+                .map(this::toEstimateResponseDto);
+    }
 }

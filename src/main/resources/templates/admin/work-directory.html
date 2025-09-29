@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html th:replace="~{_layout :: html(content=~{::content}, title='Work Directory Management')}">
+<body>
+<div th:fragment="content">
+    <div class="container-fluid py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Work Directory Management</h1>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSectionModal">
+                <i class="fas fa-plus"></i> Add New Section
+            </button>
+        </div>
+
+        <div class="row">
+            <!-- Sections Column -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Sections</h4>
+                    </div>
+                    <ul class="list-group list-group-flush" id="sections-list">
+                        <!-- Sections will be loaded here -->
+                        <li class="list-group-item">Loading...</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Subsections Column -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Subsections</h4>
+                        <button class="btn btn-sm btn-success float-end" id="add-subsection-btn" style="display: none;" data-bs-toggle="modal" data-bs-target="#addSubsectionModal">
+                            Add Subsection
+                        </button>
+                    </div>
+                    <ul class="list-group list-group-flush" id="subsections-list">
+                        <li class="list-group-item text-muted">Select a section to view subsections</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Positions Column -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Positions</h4>
+                        <button class="btn btn-sm btn-success float-end" id="add-position-btn" style="display: none;" data-bs-toggle="modal" data-bs-target="#addPositionModal">
+                            Add Position
+                        </button>
+                    </div>
+                    <ul class="list-group list-group-flush" id="positions-list">
+                        <li class="list-group-item text-muted">Select a subsection to view positions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Section Modal -->
+    <div class="modal fade" id="addSectionModal" tabindex="-1" aria-labelledby="addSectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addSectionModalLabel">Add New Section</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-section-form">
+                        <div class="mb-3">
+                            <label for="section-name" class="form-label">Section Name</label>
+                            <input type="text" class="form-control" id="section-name" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="add-section-form" class="btn btn-primary">Save Section</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Subsection Modal -->
+    <div class="modal fade" id="addSubsectionModal" tabindex="-1" aria-labelledby="addSubsectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addSubsectionModalLabel">Add New Subsection</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-subsection-form">
+                        <div class="mb-3">
+                            <label for="subsection-name" class="form-label">Subsection Name</label>
+                            <input type="text" class="form-control" id="subsection-name" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="add-subsection-form" class="btn btn-primary">Save Subsection</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Position Modal -->
+    <div class="modal fade" id="addPositionModal" tabindex="-1" aria-labelledby="addPositionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPositionModalLabel">Add New Position</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-position-form">
+                        <div class="mb-3">
+                            <label for="position-name" class="form-label">Position Name</label>
+                            <input type="text" class="form-control" id="position-name" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="position-unit" class="form-label">Unit</label>
+                                <input type="text" class="form-control" id="position-unit" placeholder="e.g., m2, pcs, lm" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="position-cost-price" class="form-label">Cost Price (AED)</label>
+                                <input type="number" step="0.01" class="form-control" id="position-cost-price" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="position-customer-price" class="form-label">Customer Price (AED)</label>
+                                <input type="number" step="0.01" class="form-control" id="position-customer-price" required>
+                            </div>
+                        </div>
+                         <div class="mb-3 mt-3">
+                            <label for="position-description" class="form-label">Description</label>
+                            <textarea class="form-control" id="position-description" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="add-position-form" class="btn btn-primary">Save Position</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TODO: Add JavaScript to fetch data and handle CRUD operations -->
+
+</div>
+</body>
+</html>

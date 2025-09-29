@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EstimateRepository extends JpaRepository<Estimate, Integer> {
     Page<Estimate> findByProject(Project project, Pageable pageable);
-    Page<Estimate> findByEstimator(User estimator, Pageable pageable);
+    Page<Estimate> findAllByEstimator(User estimator, Pageable pageable);
     Page<Estimate> findByStatus(String status, Pageable pageable);
 }
