@@ -1,13 +1,9 @@
 package cyfr.ae.estimate.service;
 
-import cyfr.ae.estimate.dto.SignInRequest;
 import cyfr.ae.estimate.dto.SignUpRequest;
 import cyfr.ae.estimate.model.User;
 import cyfr.ae.estimate.repository.UserRepository;
-import cyfr.ae.estimate.security.JwtService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +14,9 @@ public class AuthenticationService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
 
     @Transactional
-    public String signup(SignUpRequest request) {
+    public void signup(SignUpRequest request) {
         var user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
@@ -30,14 +24,5 @@ public class AuthenticationService {
                 .role(request.getRole())
                 .build();
         userRepository.save(user);
-        return jwtService.generateToken(user);
-    }
-
-    public String signin(SignInRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        var user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password."));
-        return jwtService.generateToken(user);
     }
 }
