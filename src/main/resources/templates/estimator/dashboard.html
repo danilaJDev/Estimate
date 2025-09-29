@@ -25,14 +25,53 @@
                     </thead>
                     <tbody id="estimates-table-body">
                     <!-- Data will be loaded here via JavaScript -->
-                    <tr>
-                        <td colspan="5" class="text-center">Loading...</td>
-                    </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const estimatesTableBody = document.getElementById('estimates-table-body');
+
+            async function loadEstimates() {
+                try {
+                    const response = await fetch('/api/v1/estimates/my');
+                    if (!response.ok) throw new Error('Failed to fetch estimates');
+                    const page = await response.json();
+                    const estimates = page.content;
+
+                    estimatesTableBody.innerHTML = '';
+                    if (estimates.length === 0) {
+                        estimatesTableBody.innerHTML = '<tr><td colspan="5" class="text-center">No estimates found.</td></tr>';
+                        return;
+                    }
+
+                    estimates.forEach(estimate => {
+                        const row = `
+                            <tr>
+                                <th scope="row">${estimate.id}</th>
+                                <td>${estimate.projectName}</td>
+                                <td><span class="badge bg-info">${estimate.status}</span></td>
+                                <td>${new Date(estimate.lastModifiedDate).toLocaleString()}</td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+                                    <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                </td>
+                            </tr>
+                        `;
+                        estimatesTableBody.insertAdjacentHTML('beforeend', row);
+                    });
+                } catch (error) {
+                    console.error('Error loading estimates:', error);
+                    estimatesTableBody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Failed to load estimates.</td></tr>';
+                }
+            }
+
+            loadEstimates();
+        });
+    </script>
 </div>
 </body>
 </html>

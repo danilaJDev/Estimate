@@ -39,4 +39,16 @@ public class ViewController {
     public String register() {
         return "register";
     }
+
+    @GetMapping("/admin/work-directory")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String workDirectory() {
+        return "admin/work-directory";
+    }
+
+    @GetMapping("/estimates/new")
+    @PreAuthorize("hasRole('ESTIMATOR')")
+    public String newEstimateForm() {
+        return "estimator/form";
+    }
 }

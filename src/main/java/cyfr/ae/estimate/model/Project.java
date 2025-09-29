@@ -36,4 +36,7 @@ public class Project {
 
     @Column(nullable = false)
     private String projectType; // "fitout" for now
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Estimate> estimates;
 }

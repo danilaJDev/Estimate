@@ -146,8 +146,145 @@
         </div>
     </div>
 
-    <!-- TODO: Add JavaScript to fetch data and handle CRUD operations -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const API_BASE_URL = '/api/v1/admin/work-directory';
+            let selectedSectionId = null;
+            let selectedSubsectionId = null;
 
+            const sectionsList = document.getElementById('sections-list');
+            const subsectionsList = document.getElementById('subsections-list');
+            const positionsList = document.getElementById('positions-list');
+
+            const addSubsectionBtn = document.getElementById('add-subsection-btn');
+            const addPositionBtn = document.getElementById('add-position-btn');
+
+            // Fetch and render all sections on page load
+            async function loadSections() {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/sections`);
+                    if (!response.ok) throw new Error('Failed to fetch sections');
+                    const sections = await response.json();
+
+                    sectionsList.innerHTML = '';
+                    sections.forEach(section => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item list-group-item-action';
+                        li.textContent = section.name;
+                        li.dataset.id = section.id;
+                        li.addEventListener('click', () => handleSectionClick(section));
+                        sectionsList.appendChild(li);
+                    });
+                } catch (error) {
+                    console.error('Error loading sections:', error);
+                    sectionsList.innerHTML = '<li class="list-group-item text-danger">Failed to load sections.</li>';
+                }
+            }
+
+            function handleSectionClick(section) {
+                selectedSectionId = section.id;
+                selectedSubsectionId = null;
+
+                // Highlight selected section
+                document.querySelectorAll('#sections-list .list-group-item').forEach(el => el.classList.remove('active'));
+                document.querySelector(`#sections-list [data-id='${section.id}']`).classList.add('active');
+
+                // Show add subsection button
+                addSubsectionBtn.style.display = 'inline-block';
+                addPositionBtn.style.display = 'none';
+
+                // Render subsections
+                subsectionsList.innerHTML = '';
+                if (section.subsections && section.subsections.length > 0) {
+                    section.subsections.forEach(subsection => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item list-group-item-action';
+                        li.textContent = subsection.name;
+                        li.dataset.id = subsection.id;
+                        li.addEventListener('click', () => handleSubsectionClick(subsection));
+                        subsectionsList.appendChild(li);
+                    });
+                } else {
+                    subsectionsList.innerHTML = '<li class="list-group-item text-muted">No subsections found.</li>';
+                }
+                positionsList.innerHTML = '<li class="list-group-item text-muted">Select a subsection to view positions</li>';
+            }
+
+            function handleSubsectionClick(subsection) {
+                selectedSubsectionId = subsection.id;
+
+                // Highlight selected subsection
+                document.querySelectorAll('#subsections-list .list-group-item').forEach(el => el.classList.remove('active'));
+                document.querySelector(`#subsections-list [data-id='${subsection.id}']`).classList.add('active');
+
+                // Show add position button
+                addPositionBtn.style.display = 'inline-block';
+
+                // Render positions
+                positionsList.innerHTML = '';
+                if (subsection.positions && subsection.positions.length > 0) {
+                    subsection.positions.forEach(position => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.textContent = `${position.name} (${position.customerPrice} AED/${position.unit})`;
+                        positionsList.appendChild(li);
+                    });
+                } else {
+                    positionsList.innerHTML = '<li class="list-group-item text-muted">No positions found.</li>';
+                }
+            }
+
+            // Handle form submissions
+            document.getElementById('add-section-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const name = document.getElementById('section-name').value;
+                await fetch(`${API_BASE_URL}/sections`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ name })
+                });
+                bootstrap.Modal.getInstance(document.getElementById('addSectionModal')).hide();
+                loadSections();
+                this.reset();
+            });
+
+            document.getElementById('add-subsection-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const name = document.getElementById('subsection-name').value;
+                await fetch(`${API_BASE_URL}/subsections`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ name, sectionId: selectedSectionId })
+                });
+                bootstrap.Modal.getInstance(document.getElementById('addSubsectionModal')).hide();
+                loadSections(); // Reload all to see changes
+                this.reset();
+            });
+
+            document.getElementById('add-position-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const payload = {
+                    name: document.getElementById('position-name').value,
+                    unit: document.getElementById('position-unit').value,
+                    costPrice: document.getElementById('position-cost-price').value,
+                    customerPrice: document.getElementById('position-customer-price').value,
+                    description: document.getElementById('position-description').value,
+                    subsectionId: selectedSubsectionId
+                };
+                await fetch(`${API_BASE_URL}/positions`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                bootstrap.Modal.getInstance(document.getElementById('addPositionModal')).hide();
+                loadSections();
+                this.reset();
+            });
+
+            // Initial load
+            loadSections();
+        });
+    </script>
 </div>
 </body>
 </html>

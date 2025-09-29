@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html th:replace="~{_layout :: html(content=~{::content}, title='Create Estimate')}">
+<body>
+<div th:fragment="content">
+    <div class="container py-5">
+        <h1>Create New Estimate</h1>
+
+        <form id="estimate-form">
+            <!-- Project Selection -->
+            <div class="mb-4">
+                <label for="project-select" class="form-label"><h4>1. Select Project</h4></label>
+                <select class="form-select" id="project-select" required>
+                    <option selected disabled value="">Choose a project...</option>
+                    <!-- Projects will be loaded here -->
+                </select>
+            </div>
+
+            <!-- Work Directory & Estimate Items -->
+            <div class="row">
+                <!-- Work Directory -->
+                <div class="col-md-5">
+                    <h4>2. Add Work Positions</h4>
+                    <div id="work-directory-accordion">
+                        <!-- Work directory will be loaded here -->
+                    </div>
+                </div>
+                <!-- Estimate Items Table -->
+                <div class="col-md-7">
+                    <h4>3. Estimate Details</h4>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Work</th>
+                            <th>Quantity</th>
+                            <th>Local Coeff.</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody id="estimate-items-tbody">
+                        <!-- Items will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Coefficients & Totals -->
+            <div class="row justify-content-end mt-4">
+                <div class="col-md-5">
+                    <h4>4. Final Calculations</h4>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Overall Coefficient</span>
+                        <input type="number" class="form-control" id="overall-coefficient" value="1.0" step="0.01">
+                    </div>
+                    <!-- Other options like VAT/Markup can be added here -->
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <h5>Subtotal:</h5>
+                        <h5 id="subtotal">0.00 AED</h5>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <h5>Final Total:</h5>
+                        <h5 id="final-total">0.00 AED</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">Save Estimate</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- TODO: Add extensive JS for dynamic functionality -->
+</div>
+</body>
+</html>

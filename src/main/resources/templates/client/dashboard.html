@@ -35,11 +35,63 @@
                     </div>
                 </div>
             </div>
-            <div class="text-center mt-4">
-                <p>Loading your projects...</p>
-            </div>
+            <!-- Projects will be loaded here dynamically -->
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const accordionContainer = document.getElementById('projectsAccordion');
+
+            async function loadProjects() {
+                try {
+                    const response = await fetch('/api/v1/client/projects');
+                    if (!response.ok) throw new Error('Failed to fetch projects');
+                    const page = await response.json();
+                    const projects = page.content;
+
+                    accordionContainer.innerHTML = '';
+                    if (projects.length === 0) {
+                        accordionContainer.innerHTML = '<p class="text-center">No projects found.</p>';
+                        return;
+                    }
+
+                    projects.forEach((project, index) => {
+                        const estimatesHtml = project.estimates.map(estimate => `
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Estimate #${estimate.id}
+                                <div>
+                                    <span class="badge bg-primary">${estimate.status}</span>
+                                    <a href="/estimates/${estimate.id}" class="btn btn-sm btn-outline-primary ms-2">View</a>
+                                </div>
+                            </li>
+                        `).join('');
+
+                        const projectHtml = `
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading-${project.id}">
+                                    <button class="accordion-button ${index > 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${project.id}" aria-expanded="${index === 0}" aria-controls="collapse-${project.id}">
+                                        <strong>${project.name}</strong> <span class="ms-2 badge bg-secondary">${project.projectType}</span>
+                                    </button>
+                                </h2>
+                                <div id="collapse-${project.id}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" aria-labelledby="heading-${project.id}" data-bs-parent="#projectsAccordion">
+                                    <div class="accordion-body">
+                                        <h5>Estimates:</h5>
+                                        ${project.estimates.length > 0 ? `<ul class="list-group">${estimatesHtml}</ul>` : '<p>No estimates for this project yet.</p>'}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        accordionContainer.insertAdjacentHTML('beforeend', projectHtml);
+                    });
+                } catch (error) {
+                    console.error('Error loading projects:', error);
+                    accordionContainer.innerHTML = '<p class="text-center text-danger">Failed to load projects.</p>';
+                }
+            }
+
+            loadProjects();
+        });
+    </script>
 </div>
 </body>
 </html>
