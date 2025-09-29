@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html th:replace="~{_layout :: html(content=~{::content}, title='Admin Dashboard')}">
+<body>
+<div th:fragment="content">
+    <div class="container py-5">
+        <h1 class="mb-4">Admin Dashboard</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Work Directory</h5>
+                        <p class="card-text">Manage sections, subsections, and work positions.</p>
+                        <a href="/admin/work-directory" class="btn btn-primary">Go to Directory</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">User Management</h5>
+                        <p class="card-text">View and manage user accounts and roles.</p>
+                        <a href="#" class="btn btn-primary disabled">Manage Users (WIP)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
