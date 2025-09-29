@@ -5,14 +5,15 @@
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
             <h2 class="text-center mb-4">Login</h2>
-            <form th:action="@{/login}" method="post">
-                <!-- Error message -->
-                <div th:if="${param.error}" class="alert alert-danger" role="alert">
+            <form id="login-form" action="/api/v1/auth/signin" method="post">
+                <div id="error-message" class="alert alert-danger" role="alert" style="display: none;">
                     Invalid username or password.
                 </div>
-                <!-- Logout message -->
                 <div th:if="${param.logout}" class="alert alert-success" role="alert">
                     You have been logged out.
+                </div>
+                 <div th:if="${param.registration_success}" class="alert alert-success" role="alert">
+                    Registration successful! Please log in.
                 </div>
 
                 <div class="mb-3">
@@ -32,6 +33,46 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            const errorMessageDiv = document.getElementById('error-message');
+            errorMessageDiv.style.display = 'none';
+
+            fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Login failed');
+                }
+            })
+            .then(data => {
+                if (data.token) {
+                    localStorage.setItem('jwt', data.token);
+                    window.location.href = '/';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorMessageDiv.style.display = 'block';
+            });
+        });
+    </script>
 </div>
 </body>
 </html>
