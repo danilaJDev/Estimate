@@ -1,6 +1,5 @@
 package cyfr.ae.estimate.service;
 
-import cyfr.ae.estimate.dto.JwtAuthenticationResponse;
 import cyfr.ae.estimate.dto.SignInRequest;
 import cyfr.ae.estimate.dto.SignUpRequest;
 import cyfr.ae.estimate.model.User;
@@ -23,7 +22,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     @Transactional
-    public JwtAuthenticationResponse signup(SignUpRequest request) {
+    public String signup(SignUpRequest request) {
         var user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
@@ -31,16 +30,14 @@ public class AuthenticationService {
                 .role(request.getRole())
                 .build();
         userRepository.save(user);
-        var jwt = jwtService.generateToken(user);
-        return JwtAuthenticationResponse.builder().token(jwt).build();
+        return jwtService.generateToken(user);
     }
 
-    public JwtAuthenticationResponse signin(SignInRequest request) {
+    public String signin(SignInRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         var user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid username or password."));
-        var jwt = jwtService.generateToken(user);
-        return JwtAuthenticationResponse.builder().token(jwt).build();
+        return jwtService.generateToken(user);
     }
 }
